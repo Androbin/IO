@@ -47,10 +47,15 @@ public final class FileUtil
 	
 	public static String readFile( final File file ) throws IOException
 	{
-		final FileReader reader = new FileReader( file );
+		final Reader reader = new FileReader( file );
 		final String data = read( reader );
 		reader.close();
 		return data;
+	}
+	
+	public static String read( final InputStream stream ) throws IOException
+	{
+		return read( new InputStreamReader( stream ) );
 	}
 	
 	public static String read( final Reader reader ) throws IOException
