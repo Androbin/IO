@@ -1,6 +1,7 @@
-package de.androbin.util;
+package de.androbin.io.util;
 
 import java.io.*;
+import java.util.*;
 import java.util.function.*;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -65,12 +66,11 @@ public final class FileUtil
 	
 	public static String read( final BufferedReader reader ) throws IOException
 	{
-		final StringBuilder sb = new StringBuilder();
+		final StringJoiner joiner = new StringJoiner( System.lineSeparator() );
 		reader.lines().forEachOrdered( line ->
 		{
-			sb.append( System.lineSeparator() );
-			sb.append( line );
+			joiner.add( line );
 		} );
-		return sb.toString();
+		return joiner.toString();
 	}
 }
