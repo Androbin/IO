@@ -10,16 +10,29 @@ public final class FileChooserUtil
 	{
 	}
 	
+	public static File askForDirectoryOpening( final File dir )
+	{
+		final JFileChooser jfc = createDirectoryChooser( dir );
+		return openDialog( jfc );
+	}
+	
 	public static File askForFileOpening( final File dir, final FileFilter filter )
 	{
 		final JFileChooser jfc = createFileChooser( dir, filter );
-		return jfc.showOpenDialog( null ) == JFileChooser.APPROVE_OPTION ? jfc.getSelectedFile() : null;
+		return openDialog( jfc );
 	}
 	
 	public static File askForFileSaving( final File dir, final FileFilter filter )
 	{
 		final JFileChooser jfc = createFileChooser( dir, filter );
-		return jfc.showSaveDialog( null ) == JFileChooser.APPROVE_OPTION ? jfc.getSelectedFile() : null;
+		return saveDialog( jfc );
+	}
+	
+	public static JFileChooser createDirectoryChooser( final File dir )
+	{
+		final JFileChooser jfc = new JFileChooser( dir );
+		jfc.setFileSelectionMode( JFileChooser.DIRECTORIES_ONLY );
+		return jfc;
 	}
 	
 	public static JFileChooser createFileChooser( final File dir, final FileFilter filter )
@@ -27,5 +40,15 @@ public final class FileChooserUtil
 		final JFileChooser jfc = new JFileChooser( dir );
 		jfc.setFileFilter( filter );
 		return jfc;
+	}
+	
+	private static File openDialog( final JFileChooser jfc )
+	{
+		return jfc.showOpenDialog( null ) == JFileChooser.APPROVE_OPTION ? jfc.getSelectedFile() : null;
+	}
+	
+	private static File saveDialog( final JFileChooser jfc )
+	{
+		return jfc.showSaveDialog( null ) == JFileChooser.APPROVE_OPTION ? jfc.getSelectedFile() : null;
 	}
 }
