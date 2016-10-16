@@ -1,6 +1,7 @@
 package de.androbin.io.util;
 
 import java.io.*;
+import java.net.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -12,12 +13,9 @@ public final class FileReaderUtil
 	
 	public static <T> T loadFile( final File file, final Function<FileInputStream, T> f )
 	{
-		try
+		try ( final FileInputStream stream = new FileInputStream( file ) )
 		{
-			final FileInputStream stream = new FileInputStream( file );
-			final T o = f.apply( stream );
-			stream.close();
-			return o;
+			return f.apply( stream );
 		}
 		catch ( final IOException e )
 		{
@@ -27,10 +25,15 @@ public final class FileReaderUtil
 	
 	public static String readFile( final File file ) throws IOException
 	{
-		final Reader reader = new FileReader( file );
-		final String data = read( reader );
-		reader.close();
-		return data;
+		try ( final Reader reader = new FileReader( file ) )
+		{
+			return read( reader );
+		}
+	}
+	
+	public static String read( final URL url ) throws IOException
+	{
+		return read( url.openStream() );
 	}
 	
 	public static String read( final InputStream stream ) throws IOException
@@ -50,6 +53,7 @@ public final class FileReaderUtil
 		{
 			joiner.add( line );
 		} );
+		reader.close();
 		return joiner.toString();
 	}
 }
