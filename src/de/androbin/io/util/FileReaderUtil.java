@@ -49,11 +49,13 @@ public final class FileReaderUtil
 	public static String read( final BufferedReader reader ) throws IOException
 	{
 		final StringJoiner joiner = new StringJoiner( System.lineSeparator() );
-		reader.lines().forEachOrdered( line ->
-		{
-			joiner.add( line );
-		} );
-		reader.close();
+		read( reader, line -> joiner.add( line ) );
 		return joiner.toString();
+	}
+	
+	public static void read( final BufferedReader reader, final Consumer<String> consumer ) throws IOException
+	{
+		reader.lines().forEachOrdered( consumer );
+		reader.close();
 	}
 }

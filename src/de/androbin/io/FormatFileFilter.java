@@ -2,7 +2,6 @@ package de.androbin.io;
 
 import java.io.*;
 import javax.swing.filechooser.FileFilter;
-import jdk.nashorn.internal.objects.annotations.*;
 
 public final class FormatFileFilter extends FileFilter
 {
@@ -27,7 +26,6 @@ public final class FormatFileFilter extends FileFilter
 		return description;
 	}
 	
-	@ Getter
 	public String getEnding()
 	{
 		return ending;
