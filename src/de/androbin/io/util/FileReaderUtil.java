@@ -44,9 +44,9 @@ public final class FileReaderUtil {
     }
   }
   
-  public static <T> T readFile( final File file, final Function<BufferedReader, T> f ) {
+  public static <T> T readFile( final File file, final Function<BufferedReader, T> function ) {
     try ( final BufferedReader reader = new BufferedReader( new FileReader( file ) ) ) {
-      return f.apply( reader );
+      return function.apply( reader );
     } catch ( final IOException e ) {
       return null;
     }

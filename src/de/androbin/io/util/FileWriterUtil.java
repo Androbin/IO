@@ -16,9 +16,9 @@ public final class FileWriterUtil {
     }
   }
   
-  public static boolean writeFile( final File file, final Consumer<BufferedWriter> f ) {
+  public static boolean writeFile( final File file, final Consumer<BufferedWriter> consumer ) {
     try ( final BufferedWriter writer = new BufferedWriter( new FileWriter( file ) ) ) {
-      f.accept( writer );
+      consumer.accept( writer );
       return true;
     } catch ( final IOException e ) {
       return false;

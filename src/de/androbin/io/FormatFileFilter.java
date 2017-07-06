@@ -4,8 +4,8 @@ import java.io.*;
 import javax.swing.filechooser.FileFilter;
 
 public final class FormatFileFilter extends FileFilter {
-  private final String description;
-  private final String ending;
+  public final String description;
+  public final String ending;
   
   public FormatFileFilter( final String format ) {
     description = format.toUpperCase();

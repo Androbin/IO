@@ -8,21 +8,6 @@ public final class FileChooserUtil {
   private FileChooserUtil() {
   }
   
-  public static File askForDirectoryOpening( final File dir ) {
-    final JFileChooser jfc = createDirectoryChooser( dir );
-    return openDialog( jfc );
-  }
-  
-  public static File askForFileOpening( final File dir, final FileFilter filter ) {
-    final JFileChooser jfc = createFileChooser( dir, filter );
-    return openDialog( jfc );
-  }
-  
-  public static File askForFileSaving( final File dir, final FileFilter filter ) {
-    final JFileChooser jfc = createFileChooser( dir, filter );
-    return saveDialog( jfc );
-  }
-  
   public static JFileChooser createDirectoryChooser( final File dir ) {
     final JFileChooser jfc = new JFileChooser( dir );
     jfc.setFileSelectionMode( JFileChooser.DIRECTORIES_ONLY );
@@ -39,7 +24,19 @@ public final class FileChooserUtil {
     return jfc.showOpenDialog( null ) == JFileChooser.APPROVE_OPTION ? jfc.getSelectedFile() : null;
   }
   
+  public static File openDirectory( final File dir ) {
+    return openDialog( createDirectoryChooser( dir ) );
+  }
+  
+  public static File openFile( final File dir, final FileFilter filter ) {
+    return openDialog( createFileChooser( dir, filter ) );
+  }
+  
   private static File saveDialog( final JFileChooser jfc ) {
     return jfc.showSaveDialog( null ) == JFileChooser.APPROVE_OPTION ? jfc.getSelectedFile() : null;
+  }
+  
+  public static File saveFile( final File dir, final FileFilter filter ) {
+    return saveDialog( createFileChooser( dir, filter ) );
   }
 }
