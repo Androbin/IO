@@ -36,6 +36,10 @@ public final class FileChooserUtil {
     return jfc.showSaveDialog( null ) == JFileChooser.APPROVE_OPTION ? jfc.getSelectedFile() : null;
   }
   
+  public static File saveDirectory( final File dir ) {
+    return saveDialog( createDirectoryChooser( dir ) );
+  }
+  
   public static File saveFile( final File dir, final FileFilter filter ) {
     return saveDialog( createFileChooser( dir, filter ) );
   }

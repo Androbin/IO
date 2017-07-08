@@ -28,7 +28,7 @@ public final class FileReaderUtil {
   
   public static String read( final BufferedReader reader ) {
     final StringJoiner joiner = new StringJoiner( System.lineSeparator() );
-    read( reader, line -> joiner.add( line ) );
+    read( reader, joiner::add );
     return joiner.toString();
   }
   
