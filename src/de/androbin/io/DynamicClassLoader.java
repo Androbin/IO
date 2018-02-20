@@ -1,5 +1,6 @@
 package de.androbin.io;
 
+import java.io.*;
 import java.net.*;
 import java.util.*;
 
@@ -27,6 +28,10 @@ public final class DynamicClassLoader extends URLClassLoader {
   
   public static URLClassLoader get() {
     return classLoader;
+  }
+  
+  public static File getFile( final String path ) {
+    return new File( classLoader.getResource( path ).getFile() );
   }
   
   public static void removeDynamicURL( final URL url ) {
