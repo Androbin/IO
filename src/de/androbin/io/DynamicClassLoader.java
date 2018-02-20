@@ -36,7 +36,7 @@ public final class DynamicClassLoader extends URLClassLoader {
   
   public static void removeDynamicURL( final URL url ) {
     synchronized ( LOCK ) {
-      final List<URL> urls = Arrays.asList( classLoader.getURLs() );
+      final List<URL> urls = new ArrayList<>( Arrays.asList( classLoader.getURLs() ) );
       urls.remove( url );
       classLoader = new DynamicClassLoader( urls.toArray( new URL[ urls.size() ] ) );
     }
