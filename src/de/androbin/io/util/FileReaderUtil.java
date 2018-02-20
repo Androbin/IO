@@ -1,5 +1,6 @@
 package de.androbin.io.util;
 
+import de.androbin.io.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -10,7 +11,7 @@ public final class FileReaderUtil {
   }
   
   public static String read( final String path ) {
-    final URL res = ClassLoader.getSystemResource( path );
+    final URL res = DynamicClassLoader.get().getResource( path );
     return res == null ? null : read( res );
   }
   
