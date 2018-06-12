@@ -1,45 +1,32 @@
 package de.androbin.io.util;
 
+import de.androbin.func.*;
 import java.io.*;
-import java.util.function.*;
+import java.nio.file.*;
 
 public final class FileWriterUtil {
   private FileWriterUtil() {
   }
   
-  private static boolean allocate( final File file ) {
+  private static void allocate( final Path file ) throws IOException {
+    Files.createDirectories( file.getParent() );
+    
     try {
-      file.getParentFile().mkdirs();
-      file.createNewFile();
-      return true;
-    } catch ( final IOException e ) {
-      return false;
+      Files.createFile( file );
+    } catch ( final FileAlreadyExistsException ignore ) {
     }
   }
   
-  public static boolean writeFile( final File file, final String content ) {
-    if ( !allocate( file ) ) {
-      return false;
-    }
-    
-    try ( final BufferedWriter writer = new BufferedWriter( new FileWriter( file ) ) ) {
-      writer.write( content );
-      return true;
-    } catch ( final IOException e ) {
-      return false;
-    }
+  public static void writeFile( final Path file, final String content ) throws IOException {
+    writeFile( file, writer -> writer.write( content ) );
   }
   
-  public static boolean writeFile( final File file, final Consumer<BufferedWriter> consumer ) {
-    if ( !allocate( file ) ) {
-      return false;
-    }
+  public static void writeFile( final Path file,
+      final DirtyConsumer<BufferedWriter, IOException> consumer ) throws IOException {
+    allocate( file );
     
-    try ( final BufferedWriter writer = new BufferedWriter( new FileWriter( file ) ) ) {
+    try ( final BufferedWriter writer = Files.newBufferedWriter( file ) ) {
       consumer.accept( writer );
-      return true;
-    } catch ( final IOException e ) {
-      return false;
     }
   }
 }

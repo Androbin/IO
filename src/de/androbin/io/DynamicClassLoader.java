@@ -1,7 +1,7 @@
 package de.androbin.io;
 
-import java.io.*;
 import java.net.*;
+import java.nio.file.*;
 import java.util.*;
 
 public final class DynamicClassLoader extends URLClassLoader {
@@ -26,12 +26,19 @@ public final class DynamicClassLoader extends URLClassLoader {
     }
   }
   
-  public static URLClassLoader get() {
-    return classLoader;
-  }
-  
-  public static File getFile( final String path ) {
-    return new File( classLoader.getResource( path ).getFile() );
+  public static Path getPath( final String path ) {
+    final URL url = classLoader.getResource( path );
+    
+    if ( url == null ) {
+      return null;
+    }
+    
+    try {
+      return Paths.get( url.toURI() );
+    } catch ( final URISyntaxException e ) {
+      e.printStackTrace();
+      return null;
+    }
   }
   
   public static void removeDynamicURL( final URL url ) {
