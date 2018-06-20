@@ -1,15 +1,21 @@
 package de.androbin.io;
 
+import java.io.*;
 import java.net.*;
 import java.nio.file.*;
+import java.nio.file.FileSystem;
 import java.util.*;
 
 public final class DynamicClassLoader extends URLClassLoader {
   private static final Object LOCK = new Object();
   private static DynamicClassLoader classLoader;
+  private static Deque<FileSystem> fs;
   
   static {
     classLoader = new DynamicClassLoader();
+    fs = new ArrayDeque<>();
+    
+    bindArchive( DynamicClassLoader.class );
   }
   
   private DynamicClassLoader() {
@@ -26,7 +32,43 @@ public final class DynamicClassLoader extends URLClassLoader {
     }
   }
   
+  public static void bindArchive( final Class<?> clazz ) {
+    final URL url = clazz.getResource( clazz.getSimpleName() + ".class" );
+    
+    if ( !url.toString().startsWith( "jar:" ) ) {
+      return;
+    }
+    
+    try {
+      useFileSystem( url.toURI() );
+    } catch ( final URISyntaxException e ) {
+      e.printStackTrace();
+    }
+  }
+  
   public static Path getPath( final String path ) {
+    final URI uri = getURI( path );
+    
+    if ( uri == null ) {
+      return null;
+    }
+    
+    try {
+      return Paths.get( uri );
+    } catch ( final FileSystemNotFoundException ignore ) {
+    }
+    
+    for ( final FileSystem fs : DynamicClassLoader.fs ) {
+      try {
+        return fs.provider().getPath( uri );
+      } catch ( final IllegalArgumentException ignore ) {
+      }
+    }
+    
+    return null;
+  }
+  
+  private static URI getURI( final String path ) {
     final URL url = classLoader.getResource( path );
     
     if ( url == null ) {
@@ -34,7 +76,7 @@ public final class DynamicClassLoader extends URLClassLoader {
     }
     
     try {
-      return Paths.get( url.toURI() );
+      return url.toURI();
     } catch ( final URISyntaxException e ) {
       e.printStackTrace();
       return null;
@@ -47,5 +89,23 @@ public final class DynamicClassLoader extends URLClassLoader {
       urls.remove( url );
       classLoader = new DynamicClassLoader( urls.toArray( new URL[ urls.size() ] ) );
     }
+  }
+  
+  @ SuppressWarnings( "resource" )
+  public static Closeable useFileSystem( final URI uri ) {
+    final FileSystem fs;
+    
+    try {
+      fs = FileSystems.newFileSystem( uri, Collections.emptyMap() );
+    } catch ( final IOException e ) {
+      e.printStackTrace();
+      return null;
+    }
+    
+    DynamicClassLoader.fs.push( fs );
+    return () -> {
+      DynamicClassLoader.fs.pop();
+      fs.close();
+    };
   }
 }
