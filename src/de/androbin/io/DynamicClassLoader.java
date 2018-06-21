@@ -1,5 +1,6 @@
 package de.androbin.io;
 
+import de.androbin.io.util.*;
 import java.io.*;
 import java.net.*;
 import java.nio.file.*;
@@ -39,11 +40,17 @@ public final class DynamicClassLoader extends URLClassLoader {
       return;
     }
     
+    final URI uri;
+    
     try {
-      useFileSystem( url.toURI() );
+      uri = url.toURI();
     } catch ( final URISyntaxException e ) {
       e.printStackTrace();
+      return;
     }
+    
+    final Path root = FileSystemUtil.createRoot( uri );
+    useFileSystem( root.getFileSystem() );
   }
   
   public static Path getPath( final String path ) {
@@ -91,20 +98,10 @@ public final class DynamicClassLoader extends URLClassLoader {
     }
   }
   
-  @ SuppressWarnings( "resource" )
-  public static Closeable useFileSystem( final URI uri ) {
-    final FileSystem fs;
-    
-    try {
-      fs = FileSystems.newFileSystem( uri, Collections.emptyMap() );
-    } catch ( final IOException e ) {
-      e.printStackTrace();
-      return null;
-    }
-    
+  public static Closeable useFileSystem( final FileSystem fs ) {
     DynamicClassLoader.fs.push( fs );
     return () -> {
-      DynamicClassLoader.fs.pop();
+      DynamicClassLoader.fs.remove( fs );
       fs.close();
     };
   }

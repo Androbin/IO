@@ -16,7 +16,9 @@ public final class FileWriterUtil {
       final DirtyConsumer<BufferedWriter, IOException> consumer ) throws IOException {
     Files.createDirectories( file.getParent() );
     
-    try ( final BufferedWriter writer = Files.newBufferedWriter( file ) ) {
+    try ( final BufferedWriter writer = Files.newBufferedWriter( file,
+        StandardOpenOption.CREATE,
+        StandardOpenOption.TRUNCATE_EXISTING ) ) {
       consumer.accept( writer );
     }
   }
